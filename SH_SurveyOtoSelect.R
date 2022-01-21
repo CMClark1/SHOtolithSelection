@@ -14,7 +14,7 @@ channel <- ROracle::dbConnect(DBI::dbDriver("Oracle"), username="username", pass
 ##Survey Sample Data-------------------------
 
 #Select fish with otoliths collected during missing otolith years
-S <- dbGetQuery(channel, "select a.mission, a.setno, b.fshno, b.fsex, b.flen, b.fwt, b.age from 
+S <- dbGetQuery(channel, "select a.mission, a.setno, a.strat, b.fshno, b.fsex, b.flen, b.fwt, b.age from 
                     groundfish.gsinf a, groundfish.gsdet b where a.mission in ('NED2011025') 
                     and b.spec=14 and a.mission=b.mission 
                     and a.setno=b.setno and b.fshno is not null")
@@ -24,6 +24,9 @@ S$YEAR <- as.factor(substr(S$MISSION, start = 4, stop = 7))
 
 #Add a quarter column
 S$QUARTER <- "Q3"
+
+#Select Scotian Shelf strata
+S <- S %>% filter(STRAT %in% c(440:483))
 
 #Select only sex codes 1 and 2
 S <- S %>% filter(FSEX %in% c(1, 2))
