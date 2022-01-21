@@ -11,40 +11,32 @@ library(tidyr)
 
 channel <- ROracle::dbConnect(DBI::dbDriver("Oracle"), username="username", password="password", "PTRAN")
 
-##Port Sample Data-------------------------
+##Survey Sample Data-------------------------
 
 #Select fish with otoliths collected during missing otolith years
-P <- dbGetQuery(channel, "select 
-                   a.SAMPLE, a.DATELANDED, a.AREA, 
-                   b.fishlen, b.otolith, b.age, b.sex
-                   from mfd_port_samples.gpsamples a, mfd_port_samples.gpages b 
-                   where extract(YEAR from a.DATELANDED) in (2011) 
-                   and a.SPECIES=14 
-                   and a.sample=b.sample 
-                   and b.otolith is not null")
+S <- dbGetQuery(channel, "select a.mission, a.setno, b.fshno, b.fsex, b.flen, b.fwt, b.age from 
+                    groundfish.gsinf a, groundfish.gsdet b where a.mission in ('NED2011025') 
+                    and b.spec=14 and a.mission=b.mission 
+                    and a.setno=b.setno and b.fshno is not null")
 
-P$MONTH <- as.numeric(substr(P$DATELANDED, start = 6, stop = 7))
+#Add a year column
+S$YEAR <- as.factor(substr(S$MISSION, start = 4, stop = 7))
 
-P <- P %>%  mutate(
-  QUARTER = case_when(
-    MONTH %in% c(1:3) ~ 'Q1'
-    , MONTH %in% c(4:6) ~ 'Q2'
-    , MONTH %in% c(7:9) ~ 'Q3'
-    , MONTH %in% c(10:12) ~ 'Q4' ) )
+#Add a quarter column
+S$QUARTER <- "Q3"
 
-P <- P %>% filter(QUARTER == 'Q4')
-
-P$SEX <- as.numeric(P$SEX)
+#Select only sex codes 1 and 2
+S <- S %>% filter(FSEX %in% c(1, 2))
 
 
 
 sex <- 1 #Selects sex (1 male, 2 female)
-A <- P[!is.na(P$AGE) & !is.na(P$FISHLEN) & P$SEX == sex,] #Clean data - no NAs for age or length
+A <- S[!is.na(S$AGE) & !is.na(S$FLEN) & S$FSEX == sex,] #Clean data - no NAs for age or length
 nrow(A)
-hist(A$FISHLEN)
+hist(A$FLEN)
 maxage <- max(A$AGE)
-lmax <- max(A$FISHLEN)
-lmin <- min(A$FISHLEN)
+lmax <- max(A$FLEN)
+lmin <- min(A$FLEN)
 
 #Choose bin size here
 #lbins <- lmin:lmax #Sets bins to 1cm
@@ -168,36 +160,3 @@ ggplot(CV_2cm, aes(x=Sample, y=CV, group=Sex, colour=Sex)) +
   geom_point() +
   theme_bw() +
   xlab("No. Subsampled per 2cm")
-
-#Port Sample Data-----------------
-
-P <- dbGetQuery(channel, "select 
-                   a.SAMPLE, a.DATELANDED, a.AREA, 
-                   b.fishlen, b.age, b.sex 
-                   from mfd_port_samples.gpsamples a, mfd_port_samples.gpages b 
-                   where extract(YEAR from a.DATELANDED) in (2011) 
-                   and a.SPECIES=14 
-                   and a.sample=b.sample")
-
-P$YEAR <- as.factor(substr(P$SAMPLE, start = 1, stop = 4))
-
-P$MONTH <- as.numeric(substr(P$DATELANDED, start = 6, stop = 7))
-
-P <- P %>%  mutate(
-  QUARTER = case_when(
-    MONTH %in% c(1:3) ~ 'Q1'
-    , MONTH %in% c(4:6) ~ 'Q2'
-    , MONTH %in% c(7:9) ~ 'Q3'
-    , MONTH %in% c(10:12) ~ 'Q4' ) )
-
-P <- P %>% filter(QUARTER == 'Q4')
-
-
-sex <- 2 #Selects sex (1 male, 2 female)
-A <- S[!is.na(S$AGE) & !is.na(S$FLEN) & S$FSEX == sex,] #Clean data - no NAs for age or length
-nrow(A)
-hist(A$FLEN)
-maxage <- max(A$AGE)
-lmax <- max(A$FLEN)
-lmin <- min(A$FLEN)
-  
