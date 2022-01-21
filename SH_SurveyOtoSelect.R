@@ -25,12 +25,11 @@ S$YEAR <- as.factor(substr(S$MISSION, start = 4, stop = 7))
 #Add a quarter column
 S$QUARTER <- "Q3"
 
-#Select Scotian Shelf strata
-S <- S %>% filter(STRAT %in% c(440:483))
-
 #Select only sex codes 1 and 2
 S <- S %>% filter(FSEX %in% c(1, 2))
 
+#Select Scotian Shelf strata
+S <- S %>% filter(STRAT %in% c(440:483))
 
 
 sex <- 1 #Selects sex (1 male, 2 female)
