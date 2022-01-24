@@ -60,7 +60,7 @@ ggplot(aal2, aes(x=FISHLEN, y=Mean, group=QUARTER, colour=QUARTER)) + geom_line(
 
 ggplot(aal2, aes(x=QUARTER, y=FISHLEN, size = Mean)) +
   geom_point(aes(fill= "#00AFBB"), alpha=0.5, colour = "black", pch=21) +
-  ylab("Month") + xlab("Fish Length (cm)") +
+  ylab("Quarter") + xlab("Fish Length (cm)") +
   ggtitle("Survey Age at Length by Quarter (2002-2011)")
 
 #Average age-at-length by half
@@ -78,6 +78,6 @@ ggplot(aal3, aes(x=FISHLEN, y=Mean, group=HALF, colour=HALF)) + geom_line() + yl
 
 ggplot(aal3, aes(x=HALF, y=FISHLEN, size = Mean)) +
   geom_point(aes(fill= "#00AFBB"), alpha=0.5, colour = "black", pch=21) +
-  ylab("Month") + xlab("Fish Length (cm)") +
+  ylab("Half") + xlab("Fish Length (cm)") +
   ggtitle("Survey Age at Length by Half (2002-2011)")
        
