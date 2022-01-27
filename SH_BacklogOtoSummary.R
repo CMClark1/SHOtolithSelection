@@ -17,7 +17,7 @@ require(dplyr)
 
 ##Load survey data and select only Scotian Shelf strata used in SH assessment
 
-channel<-dbConnect(DBI::dbDriver("Oracle"), username="username", password="password", "PTRAN")
+channel <- ROracle::dbConnect(DBI::dbDriver("Oracle"), username=oracle.username, password=oracle.password, oracle.dsn)  
 
 #Select fish with otoliths collected during missing otolith years
 survey <-dbGetQuery(channel, "select a.mission, a.area, a.strat, a.slat, a.slong, a.setno, b.fshno, b.fsex, b.flen, b.fwt, b.fmat from groundfish.gsinf a, groundfish.gsdet b where a.mission in ('NED2015017', 'NED2016016', 'NED2016116', 'NED2017020', 'TEL2018023', 'NED2019030', 'NED2020025') and b.spec=14 and b.agmat='1' and a.mission=b.mission and a.setno=b.setno and b.fshno is not null")

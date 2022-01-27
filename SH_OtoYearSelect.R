@@ -4,7 +4,7 @@ library(dplyr)
 library(tidyr)
 library(Mar.fleets)
 
-channel <- ROracle::dbConnect(DBI::dbDriver("Oracle"), username="username", password="password", "PTRAN")
+channel <- ROracle::dbConnect(DBI::dbDriver("Oracle"), username=oracle.username, password=oracle.password, oracle.dsn)  
 
 shake <- dbGetQuery(channel, "select
                     t.trip, t.board_date, f.nafarea_id,
