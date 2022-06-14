@@ -163,19 +163,4 @@ ggplot(CV_2cm, aes(x=Sample, y=CV, group=Sex, colour=Sex)) +
   theme_bw() +
   xlab("No. Subsampled per 2cm")
 
-## Duplicate Removal
 
-S <- dbGetQuery(channel, "select a.mission, a.setno, a.strat, b.fshno, b.fsex, b.flen, b.fwt, b.age from 
-                    groundfish.gsinf a, groundfish.gsdet b where a.mission in ('NED2017020', 'TEL2018023', 'NED2019030', 'NED2020025', 'NED2021008', 'CAR2021241', 'CAR2021240') 
-                    and b.spec=14 and a.mission=b.mission 
-                    and a.setno=b.setno and b.fshno is not null")
-
-S$ID <- paste(S$MISSION, S$SETNO, S$FSHNO, sep="_")
-
-selection <- read.csv("C:/Users/CLARKCAI/Documents/LocalRespository/SHOtolithSelection/BacklogOtolithSelection_2017-2021.csv")
-
-selection$ID <- paste(selection$MISSION, selection$SETNO, selection$FSHNO, sep="_")
-
-ready <- S %>% filter(!S$ID %in% selection$ID) #all otoliths that were previously selected removed
-
-ready %>% filter(MISSION=="CAR2021240" & FSEX == 1 & FLEN == 28) %>% sample_n(1)
