@@ -11,7 +11,9 @@ library(tidyr)
 
 channel <- ROracle::dbConnect(DBI::dbDriver("Oracle"), username=oracle.username, password=oracle.password, oracle.dsn)  
 
-##LOAD SURVEY DATA-------------------------
+#INDIVIDUAL OTOLITHS -------------------------------------------
+
+##LOAD PoRT SAMPLE DATA-------------------------
 
 #Select fish with otoliths collected during missing otolith years
 P <- dbGetQuery(channel, "select 
@@ -314,3 +316,45 @@ otoselection <- rbind(otoselection_Q1, otoselection_Q2, otoselection_Q3, otosele
 otoselection$DUPLICATED <- duplicated(otoselection)
 
 table(otoselection$DUPLICATED)
+
+
+#WHOLE PORT SAMPLES -------------------------------------------
+
+
+##Port Sample Data-------------------------
+
+#Select fish with otoliths collected during missing otolith years
+P <- dbGetQuery(channel, "select 
+                   a.SAMPLE, a.DATELANDED, a.AREA, 
+                   b.fishlen, b.otolith, b.age, b.sex, b.weight 
+                   from mfd_port_samples.gpsamples a, mfd_port_samples.gpages b 
+                   where extract(YEAR from a.DATELANDED) in (2016, 2017, 2018, 2019, 2020, 2021) 
+                   and a.SPECIES=14 
+                   and a.sample=b.sample 
+                   and b.otolith is not null")
+
+P$YEAR <- as.factor(substr(P$SAMPLE, start = 1, stop = 4))
+
+P$MONTH <- as.numeric(substr(P$DATELANDED, start = 6, stop = 7))
+
+P <- P %>%  mutate(
+  QUARTER = case_when(
+    MONTH %in% c(1:3) ~ 'Q1'
+    , MONTH %in% c(4:6) ~ 'Q2'
+    , MONTH %in% c(7:9) ~ 'Q3'
+    , MONTH %in% c(10:12) ~ 'Q4' ) )
+
+P <- P %>% filter(AREA %in% c(440:483))
+
+#P <- P %>% filter(QUARTER == "Q4")
+
+P$n <- 1
+P2 <- P %>% 
+  group_by(YEAR, QUARTER, SAMPLE) %>% 
+  summarise(n = n()) %>% 
+  count(SAMPLE) %>% 
+  group_by(YEAR, QUARTER) %>% 
+  summarise(n=n()) %>%
+  mutate(n2 = ifelse(n>5, 5,
+                     ifelse(n<=5, n, NA)))
+
