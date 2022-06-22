@@ -48,8 +48,8 @@ lmax <- max(A$FISHLEN)
 lmin <- min(A$FISHLEN)
 
 #Choose bin size here
-lbins <- lmin:lmax #Sets bins to 1cm
-#lbins <- seq(round(lmin/2-0.1)*2,round(lmax/2-0.1)*2,2) #Sets bins to 2cm
+#lbins <- lmin:lmax #Sets bins to 1cm
+lbins <- seq(round(lmin/2-0.1)*2,round(lmax/2-0.1)*2,2) #Sets bins to 2cm
 
 nperbin <- c(1:20) #Sets number per bin (e.g. 2 per 2cm for the selected sex)
 
@@ -151,7 +151,7 @@ Vsum <- Vsum %>% pivot_longer(everything(), names_to = "sample", values_to = "to
 CV <- Msum %>% inner_join(Vsum, by="sample")
 CV$cv <- sqrt(CV$"totalvariance")/CV$"totalcount" ### CV = sqrt(total variance)/total count
 
-CV_female1cm <- CV
+CV_female2cm <- CV
 
 #Run the code above for each variation (female 1 and 2 cm, male 1 and 2cm), then save the data as CV_male1cm, CV_male2cm, CV_female1cm, CV_female2cm. Then, run the code below to create the graphs used in the report.
 
