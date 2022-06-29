@@ -30,8 +30,7 @@ P$MONTH <- as.numeric(substr(P$DATELANDED, start = 6, stop = 7))
 
 P <- P %>%  mutate(
   QUARTER = case_when(
-    MONTH %in% c(1:3) ~ 'Q1'
-    , MONTH %in% c(4:6) ~ 'Q2'
+    MONTH %in% c(1:6) ~ 'H1'
     , MONTH %in% c(7:9) ~ 'Q3'
     , MONTH %in% c(10:12) ~ 'Q4' ) )
 
@@ -71,8 +70,7 @@ O$MONTH <- as.numeric(substr(O$BOARD_DATE, start = 6, stop = 7))
 
 O <- O %>%  mutate(
   QUARTER = case_when(
-    MONTH %in% c(1:3) ~ 'Q1'
-    , MONTH %in% c(4:6) ~ 'Q2'
+    MONTH %in% c(1:6) ~ 'H1'
     , MONTH %in% c(7:9) ~ 'Q3'
     , MONTH %in% c(10:12) ~ 'Q4' ) )
 
